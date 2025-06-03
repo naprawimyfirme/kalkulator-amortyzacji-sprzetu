@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Kosztu Inwestycji</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 10px;
+            background-color: #fff;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .calculator-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #8e42ff;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 10px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+
+        .calculator-form {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 12px;
+            height: fit-content;
+        }
+
+        .form-section {
+            margin-bottom: 20px;
+        }
+
+        .form-section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            width: 20px;
+            height: 20px;
+            background-color: #4CAF50;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 1rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #8e42ff;
+            box-shadow: 0 0 0 2px rgba(142, 66, 255, 0.2);
+        }
+
+        .form-help {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        .cost-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .cost-type-selector select {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        .preset-selector {
+            margin-bottom: 10px;
+        }
+
+        .calculate-btn {
+            background-color: #8e42ff;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .calculate-btn:hover {
+            background-color: #7a39e0;
+        }
+
+        .results-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .result-card {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .result-card h2 {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .result-card h3 {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-main {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .summary-card-compact {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .summary-card-compact.primary {
+            background: #8e42ff;
+            color: white;
+        }
+
+        .summary-card-compact h4 {
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            opacity: 0.8;
+        }
+
+        .summary-card-compact .value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .summary-card-compact .unit {
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+
+        .detailed-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e9ecef;
+            margin-bottom: 15px;
+        }
+
+        .detailed-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .detailed-table th {
+            background: #333;
+            color: white;
+            padding: 8px 6px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .detailed-table td {
+            padding: 8px 6px;
+            border-bottom: 1px solid #f1f3f4;
+            font-size: 0.85rem;
+        }
+
+        .detailed-table tr:hover td {
+            background: #f8f9fa;
+        }
+
+        .detailed-table .highlight {
+            background: #e8f5e8;
+            font-weight: 600;
+            color: #27ae60;
+        }
+
+        .insights-card {
+            background-color: #e3f2fd;
+            border: 1px solid #bbdefb;
+        }
+
+        .insights-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .insights-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .insight-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .insight-dot.blue { background-color: #2196F3; }
+        .insight-dot.green { background-color: #4CAF50; }
+        .insight-dot.orange { background-color: #FF9800; }
+        .insight-dot.red { background-color: #F44336; }
+        .insight-dot.purple { background-color: #9C27B0; }
+
+        .summary-card {
+            background-color: #f5f5f5;
+            border: 1px solid #e0e0e0;
+        }
+
+        .simple-summary {
+            padding: 15px;
+        }
+
+        .simple-summary h3 {
+            color: #333;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .summary-intro {
+            color: #666;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .insights-list-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .insight-card-compact {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid;
+        }
+
+        .insight-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        .insight-icon {
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        .insight-header h4 {
+            font-size: 1rem;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .insight-description {
+            color: #2c3e50;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            margin: 0;
+            padding-left: 28px;
+        }
+
+        .final-verdict {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            text-align: center;
+        }
+
+        .final-verdict h4 {
+            color: #333;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .final-verdict p {
+            color: #333;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            border: 1px solid #ffcdd2;
+            display: none;
+        }
+
+        .success-message {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            border: 1px solid #c8e6c9;
+            display: none;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            color: #2196f3;
+            font-size: 0.9rem;
+            margin-left: 5px;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 280px;
+            background-color: #2c3e50;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -140px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+            line-height: 1.3;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #2c3e50 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .hidden { display: none; }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 5px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .main-layout {
+                padding: 5px;
+                gap: 10px;
+            }
+            
+            .calculator-form {
+                padding: 8px;
+            }
+            
+            .result-card {
+                padding: 8px;
+            }
+            
+            .form-section h2 {
+                font-size: 1.2rem;
+            }
+            
+            .form-group label {
+                font-size: 0.95rem;
+            }
+            
+            .form-help {
+                font-size: 0.75rem;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .calculator-icon {
+                width: 30px;
+                height: 30px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <div class="calculator-icon">💰</div>
+                Kalkulator Kosztu Inwestycji
+            </h1>
+            <p>Oblicz rzeczywiste koszty użytkowania sprzętu i maszyn</p>
+        </div>
+
+        <div class="main-layout">
+            <div class="calculator-form">
+                <div class="form-section">
+                    <h2>
+                        <div class="section-icon">💳</div>
+                        Dane Podstawowe
+                    </h2>
+                    
+                    <div class="error-message" id="errorMessage">
+                        ⚠️ Proszę wypełnić wszystkie pola poprawnymi wartościami
+                    </div>
+                    
+                    <div class="success-message" id="successMessage">
+                        ✅ Obliczenia zakończone pomyślnie!
+                    </div>
+
+                    <div class="form-group">
+                        <label for="purchaseCost">Jednorazowy koszt inwestycji (PLN)</label>
+                        <input type="number" step="0.01" id="purchaseCost" placeholder="np. 100000">
+                        <div class="form-help">Cena zakupu, dostawa, instalacja, przygotowanie</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="operatingCost">
+                            Koszty eksploatacji
+                            <span class="tooltip">ℹ️
+                                <span class="tooltiptext">
+                                    <strong>Koszty eksploatacji obejmują:</strong><br>
+                                    • Serwis i naprawy<br>
+                                    • Paliwo/energia<br>
+                                    • Ubezpieczenia<br>
+                                    • Części zamienne<br>
+                                    • Przeglądy techniczne<br><br>
+                                    <strong>Średnie koszty roczne:</strong><br>
+                                    • Samochód osobowy: 15-25% wartości<br>
+                                    • Ciężarówka: 20-35% wartości<br>
+                                    • Maszyna produkcyjna: 10-20% wartości<br>
+                                    • Sprzęt IT: 5-15% wartości<br>
+                                    • Maszyny budowlane: 25-40% wartości
+                                </span>
+                            </span>
+                        </label>
+                        <div class="cost-type-selector">
+                            <select id="operatingCostType" onchange="updateCostType()">
+                                <option value="total">Całkowite koszty</option>
+                                <option value="monthly">Koszty miesięczne</option>
+                                <option value="preset">Szacowanie automatyczne</option>
+                            </select>
+                        </div>
+                        <div id="presetSelector" class="preset-selector" style="display: none;">
+                            <select id="equipmentType" onchange="calculatePresetCosts()">
+                                <option value="">Wybierz typ sprzętu...</option>
+                                <option value="car">Samochód osobowy (20% rocznie)</option>
+                                <option value="truck">Ciężarówka (30% rocznie)</option>
+                                <option value="machine">Maszyna produkcyjna (15% rocznie)</option>
+                                <option value="it">Sprzęt IT (10% rocznie)</option>
+                                <option value="construction">Maszyny budowlane (35% rocznie)</option>
+                                <option value="office">Sprzęt biurowy (8% rocznie)</option>
+                                <option value="medical">Sprzęt medyczny (12% rocznie)</option>
+                            </select>
+                        </div>
+                        <input type="number" step="0.01" id="operatingCost" placeholder="50000">
+                        <div class="form-help">Serwis, paliwo, ubezpieczenia, części zamienne</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="residualValue">Wartość końcowa (rezydualna) (PLN)</label>
+                        <input type="number" step="0.01" id="residualValue" placeholder="10000" value="0">
+                        <div class="form-help">Szacowana wartość sprzedaży po okresie użytkowania</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="period">Okres użytkowania (miesiące)</label>
+                        <input type="number" step="1" id="period" placeholder="60">
+                        <div class="form-help">Planowany czas użytkowania sprzętu</div>
+                    </div>
+                </div>
+
+                <button type="button" class="calculate-btn" onclick="calculateInvestmentCost()">
+                    Oblicz koszt inwestycji
+                </button>
+            </div>
+
+            <div class="results-section">
+                <div class="result-card" id="mainResults" style="display: none;">
+                    <h2>Wynik:</h2>
+                    <div class="result-main" id="mainResultText"></div>
+                    
+                    <div class="summary-grid">
+                        <div class="summary-card-compact primary">
+                            <h4>KOSZT MIESIĘCZNY</h4>
+                            <div class="value" id="monthlyCostValue">0 zł</div>
+                            <div class="unit">na miesiąc</div>
+                        </div>
+                        <div class="summary-card-compact">
+                            <h4>KOSZT CAŁKOWITY</h4>
+                            <div class="value" id="totalNetCostValue">0 zł</div>
+                            <div class="unit">przez cały okres</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-card" id="detailsCard" style="display: none;">
+                    <h3>📊 Szczegółowe zestawienie</h3>
+                    <div class="detailed-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Element kosztowy</th>
+                                    <th>Kwota (PLN)</th>
+                                    <th>% całości</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detailedTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="result-card insights-card" id="insightsCard" style="display: none;">
+                    <h3>💡 Wnioski i Rekomendacje</h3>
+                    <div id="insightsContainer"></div>
+                </div>
+
+                <div class="result-card summary-card" id="summaryCard" style="display: none;">
+                    <div class="simple-summary">
+                        <h3>📋 Kluczowe Wnioski z Analizy</h3>
+                        <p class="summary-intro">Na podstawie wprowadzonych danych, oto najważniejsze informacje o Twojej inwestycji:</p>
+                        
+                        <div class="insights-list-summary" id="summaryInsights">
+                        </div>
+                        
+                        <div class="final-verdict" id="finalVerdict">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('pl-PL', {
+                style: 'currency',
+                currency: 'PLN',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function formatNumber(number) {
+            return new Intl.NumberFormat('pl-PL').format(number);
+        }
+
+        function showMessage(type, show = true) {
+            const errorMsg = document.getElementById('errorMessage');
+            const successMsg = document.getElementById('successMessage');
+            
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+            
+            if (show) {
+                if (type === 'error') {
+                    errorMsg.style.display = 'block';
+                } else if (type === 'success') {
+                    successMsg.style.display = 'block';
+                }
+            }
+        }
+
+        function updateCostType() {
+            const type = document.getElementById('operatingCostType').value;
+            const input = document.getElementById('operatingCost');
+            const presetSelector = document.getElementById('presetSelector');
+            
+            if (type === 'monthly') {
+                input.placeholder = '2000';
+                presetSelector.style.display = 'none';
+                input.readOnly = false;
+                input.style.background = 'white';
+            } else if (type === 'preset') {
+                input.placeholder = 'Zostanie obliczone automatycznie';
+                presetSelector.style.display = 'block';
+                input.readOnly = true;
+                input.style.background = '#f8f9fa';
+                input.value = '';
+            } else {
+                input.placeholder = '50000';
+                presetSelector.style.display = 'none';
+                input.readOnly = false;
+                input.style.background = 'white';
+            }
+            
+            hideResults();
+            showMessage('', false);
+        }
+
+        function calculatePresetCosts() {
+            const equipmentType = document.getElementById('equipmentType').value;
+            const purchaseCost = parseFloat(document.getElementById('purchaseCost').value);
+            const period = parseFloat(document.getElementById('period').value) || 60;
+            
+            if (!equipmentType || !purchaseCost || purchaseCost <= 0) {
+                document.getElementById('operatingCost').value = '';
+                return;
+            }
+            
+            const presetRates = {
+                'car': 0.20,           // 20% rocznie
+                'truck': 0.30,         // 30% rocznie
+                'machine': 0.15,       // 15% rocznie
+                'it': 0.10,            // 10% rocznie
+                'construction': 0.35,  // 35% rocznie
+                'office': 0.08,        // 8% rocznie
+                'medical': 0.12        // 12% rocznie
+            };
+            
+            const annualRate = presetRates[equipmentType] || 0.15;
+            const yearsOfUse = period / 12;
+            const totalOperatingCost = purchaseCost * annualRate * yearsOfUse;
+            
+            document.getElementById('operatingCost').value = Math.round(totalOperatingCost);
+            
+            // Automatycznie przelicz jeśli wszystkie pola są wypełnione
+            const residualValue = parseFloat(document.getElementById('residualValue').value);
+            if (!isNaN(residualValue)) {
+                calculateInvestmentCost();
+            }
+        }
+
+        function hideResults() {
+            const resultSections = ['mainResults', 'detailsCard', 'insightsCard', 'summaryCard'];
+            resultSections.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.style.display = 'none';
+            });
+        }
+
+        function showResults() {
+            const resultSections = ['mainResults', 'detailsCard', 'insightsCard', 'summaryCard'];
+            resultSections.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.style.display = 'block';
+            });
+        }
+
+        function calculateInvestmentCost() {
+            const purchaseCost = parseFloat(document.getElementById("purchaseCost").value);
+            let operatingCost = parseFloat(document.getElementById("operatingCost").value);
+            const operatingCostType = document.getElementById("operatingCostType").value;
+            const residualValue = parseFloat(document.getElementById("residualValue").value) || 0;
+            const period = parseFloat(document.getElementById("period").value);
+            
+            // Walidacja danych
+            if (isNaN(purchaseCost) || isNaN(operatingCost) || isNaN(period)) {
+                showMessage('error');
+                hideResults();
+                return;
+            }
+            
+            if (period <= 0 || purchaseCost <= 0) {
+                showMessage('error');
+                hideResults();
+                return;
+            }
+
+            if (purchaseCost < 0 || operatingCost < 0 || residualValue < 0) {
+                showMessage('error');
+                hideResults();
+                return;
+            }
+            
+            // Przeliczenie kosztów eksploatacji na całkowite jeśli podano miesięczne
+            if (operatingCostType === 'monthly') {
+                operatingCost = operatingCost * period;
+            }
+            
+            // Obliczenia
+            const netCost = purchaseCost + operatingCost - residualValue;
+            const monthlyCost = netCost / period;
+            const totalInvestment = purchaseCost + operatingCost;
+            const yearsOfUse = period / 12;
+            
+            // Główny wynik
+            document.getElementById('mainResultText').innerHTML = 
+                `Średni miesięczny koszt użytkowania wynosi <strong>${formatCurrency(monthlyCost)}</strong> przez <strong>${yearsOfUse.toFixed(1)} lat</strong>.`;
+            
+            // Karty podsumowania
+            document.getElementById('monthlyCostValue').textContent = formatCurrency(monthlyCost);
+            document.getElementById('totalNetCostValue').textContent = formatCurrency(netCost);
+            
+            // Szczegółowa tabela
+            generateDetailedTable(purchaseCost, operatingCost, residualValue, netCost, period, operatingCostType, totalInvestment);
+            
+            // Wnioski
+            generateInsights(purchaseCost, operatingCost, residualValue, monthlyCost, netCost, period);
+            
+            // Podsumowanie
+            generateSummary(purchaseCost, operatingCost, residualValue, monthlyCost, netCost, period, operatingCostType);
+            
+            showResults();
+            showMessage('success');
+        }
+
+        function generateDetailedTable(purchaseCost, operatingCost, residualValue, netCost, period, operatingCostType, totalInvestment) {
+            const tableBody = document.getElementById('detailedTableBody');
+            let costTypeLabel = 'Koszty eksploatacji i serwisu';
+            if (operatingCostType === 'preset') {
+                const equipmentSelect = document.getElementById('equipmentType');
+                const selectedOption = equipmentSelect.options[equipmentSelect.selectedIndex];
+                if (selectedOption && selectedOption.value) {
+                    costTypeLabel += ` (${selectedOption.text})`;
+                }
+            }
+            
+            const tableData = [
+                { label: 'Koszt zakupu', value: purchaseCost, percentage: (purchaseCost / totalInvestment) * 100 },
+                { label: costTypeLabel, value: operatingCost, percentage: (operatingCost / totalInvestment) * 100 },
+                { label: 'Wartość rezydualna', value: -residualValue, percentage: (residualValue / totalInvestment) * 100 },
+                { label: 'Okres użytkowania', value: period, isSpecial: true },
+                { label: 'ŁĄCZNY KOSZT NETTO', value: netCost, isHighlight: true },
+                { label: 'ŚREDNI KOSZT MIESIĘCZNY', value: netCost / period, isHighlight: true }
+            ];
+            
+            tableBody.innerHTML = tableData.map(row => {
+                let valueCell = '';
+                if (row.isSpecial) {
+                    valueCell = `${formatNumber(row.value)} mies.`;
+                } else {
+                    valueCell = formatCurrency(row.value);
+                }
+                
+                let percentageCell = '';
+                if (row.percentage !== undefined) {
+                    percentageCell = `${row.percentage.toFixed(1)}%`;
+                } else {
+                    percentageCell = '-';
+                }
+                
+                const rowClass = row.isHighlight ? 'highlight' : '';
+                
+                return `
+                    <tr class="${rowClass}">
+                        <td><strong>${row.label}</strong></td>
+                        <td>${valueCell}</td>
+                        <td>${percentageCell}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function generateInsights(purchaseCost, operatingCost, residualValue, monthlyCost, netCost, period) {
+            const insights = [];
+            const operatingPercentage = (operatingCost / purchaseCost) * 100;
+            const residualPercentage = (residualValue / purchaseCost) * 100;
+            const yearsOfUse = period / 12;
+            
+            // Analiza kosztów eksploatacji
+            if (operatingPercentage > 150) {
+                insights.push({
+                    type: 'red',
+                    icon: '⚠️',
+                    text: `Koszty eksploatacji (${operatingPercentage.toFixed(0)}% wartości zakupu) są bardzo wysokie. Rozważ alternatywne rozwiązania lub leasing.`
+                });
+            } else if (operatingPercentage > 100) {
+                insights.push({
+                    type: 'orange',
+                    icon: '🟡',
+                    text: `Koszty eksploatacji (${operatingPercentage.toFixed(0)}% wartości) są podwyższone. Upewnij się, że uwzględniłeś wszystkie możliwe oszczędności.`
+                });
+            } else if (operatingPercentage < 30) {
+                insights.push({
+                    type: 'green',
+                    icon: '✅',
+                    text: `Koszty eksploatacji są optymalne (${operatingPercentage.toFixed(0)}% wartości zakupu). To ekonomiczna inwestycja.`
+                });
+            }
+            
+            // Analiza wartości rezydualnej
+            if (residualPercentage > 30) {
+                insights.push({
+                    type: 'green',
+                    icon: '💎',
+                    text: `Wysoka wartość rezydualna (${residualPercentage.toFixed(0)}%) oznacza dobre zachowanie wartości. To pozytywnie wpływa na rentowność.`
+                });
+            } else if (residualPercentage < 5) {
+                insights.push({
+                    type: 'blue',
+                    icon: 'ℹ️',
+                    text: `Niska wartość rezydualna może oznaczać pełne wykorzystanie inwestycji lub potrzebę wcześniejszej wymiany.`
+                });
+            }
+            
+            // Analiza miesięcznego kosztu
+            const monthlyAsPercentageOfPurchase = (monthlyCost / purchaseCost) * 100;
+            if (monthlyAsPercentageOfPurchase > 5) {
+                insights.push({
+                    type: 'orange',
+                    icon: '📊',
+                    text: `Miesięczny koszt (${monthlyAsPercentageOfPurchase.toFixed(1)}% wartości zakupu) jest wysoki. Rozważ wydłużenie okresu użytkowania.`
+                });
+            } else if (monthlyAsPercentageOfPurchase < 2) {
+                insights.push({
+                    type: 'green',
+                    icon: '📈',
+                    text: `Niski miesięczny koszt (${monthlyAsPercentageOfPurchase.toFixed(1)}% wartości) świadczy o efektywnej amortyzacji inwestycji.`
+                });
+            }
+            
+            // Analiza okresu użytkowania
+            if (yearsOfUse > 10) {
+                insights.push({
+                    type: 'blue',
+                    icon: '⏰',
+                    text: `Długi okres użytkowania (${yearsOfUse.toFixed(1)} lat) może wymagać większych nakładów na konserwację w późniejszych latach.`
+                });
+            } else if (yearsOfUse < 2) {
+                insights.push({
+                    type: 'orange',
+                    icon: '⚡',
+                    text: `Krótki okres użytkowania (${yearsOfUse.toFixed(1)} lat) może nie pozwolić na pełne wykorzystanie potencjału inwestycji.`
+                });
+            }
+            
+            const insightsContainer = document.getElementById('insightsContainer');
+            insightsContainer.innerHTML = insights.map(insight => `
+                <div style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 10px; font-size: 0.9rem;">
+                    <div class="insight-dot ${insight.type}" style="margin-top: 5px;"></div>
+                    <p><strong>${insight.icon}</strong> ${insight.text}</p>
+                </div>
+            `).join('');
+        }
+
+        function generateSummary(purchaseCost, operatingCost, residualValue, monthlyCost, netCost, period, operatingCostType) {
+            const yearsOfUse = period / 12;
+            const monthlyPercentage = (monthlyCost / purchaseCost) * 100;
+            const operatingPercentage = (operatingCost / purchaseCost) * 100;
+            const residualPercentage = (residualValue / purchaseCost) * 100;
+            const dailyCost = monthlyCost / 30;
+            
+            // Generuj wnioski
+            const insights = [];
+            
+            // Wniosek 1: Koszt miesięczny
+            if (monthlyPercentage < 2) {
+                insights.push({
+                    icon: '🟢',
+                    title: 'Niski koszt miesięczny',
+                    description: `Płacisz tylko ${monthlyPercentage.toFixed(1)}% wartości sprzętu miesięcznie (${formatCurrency(monthlyCost)}). To bardzo ekonomiczne rozwiązanie.`,
+                    color: '#27ae60',
+                    priority: 'positive'
+                });
+            } else if (monthlyPercentage < 4) {
+                insights.push({
+                    icon: '🟡',
+                    title: 'Umiarkowany koszt miesięczny',
+                    description: `Miesięczny koszt wynosi ${monthlyPercentage.toFixed(1)}% wartości sprzętu (${formatCurrency(monthlyCost)}). To akceptowalny poziom dla większości firm.`,
+                    color: '#f39c12',
+                    priority: 'neutral'
+                });
+            } else {
+                insights.push({
+                    icon: '🔴',
+                    title: 'Wysoki koszt miesięczny',
+                    description: `Miesięczny koszt ${monthlyPercentage.toFixed(1)}% wartości (${formatCurrency(monthlyCost)}) jest znaczący. Rozważ alternatywy lub skróć okres użytkowania.`,
+                    color: '#e74c3c',
+                    priority: 'warning'
+                });
+            }
+            
+            // Wniosek 2: Koszty eksploatacji
+            if (operatingPercentage < 50) {
+                insights.push({
+                    icon: '✅',
+                    title: 'Optymalne koszty eksploatacji',
+                    description: `Koszty eksploatacji stanowią ${operatingPercentage.toFixed(0)}% ceny zakupu przez ${yearsOfUse.toFixed(1)} lat. To świadczy o ekonomicznym sprzęcie.`,
+                    color: '#27ae60',
+                    priority: 'positive'
+                });
+            } else if (operatingPercentage < 100) {
+                insights.push({
+                    icon: '⚡',
+                    title: 'Średnie koszty eksploatacji',
+                    description: `Eksploatacja kosztuje ${operatingPercentage.toFixed(0)}% ceny zakupu. To typowy poziom dla tego typu sprzętu.`,
+                    color: '#3498db',
+                    priority: 'neutral'
+                });
+            } else {
+                insights.push({
+                    icon: '⚠️',
+                    title: 'Wysokie koszty eksploatacji',
+                    description: `Eksploatacja kosztuje ${operatingPercentage.toFixed(0)}% ceny zakupu - to więcej niż sama cena! Sprawdź czy wszystkie koszty są konieczne.`,
+                    color: '#e74c3c',
+                    priority: 'warning'
+                });
+            }
+            
+            // Wniosek 3: Zachowanie wartości
+            if (residualPercentage > 25) {
+                insights.push({
+                    icon: '💎',
+                    title: 'Dobra utrata wartości',
+                    description: `Po ${yearsOfUse.toFixed(1)} latach sprzęt zachowa ${residualPercentage.toFixed(0)}% wartości (${formatCurrency(residualValue)}). To oznacza powolną utratę wartości.`,
+                    color: '#27ae60',
+                    priority: 'positive'
+                });
+            } else if (residualPercentage > 10) {
+                insights.push({
+                    icon: '📉',
+                    title: 'Typowa utrata wartości',
+                    description: `Sprzęt zachowa ${residualPercentage.toFixed(0)}% wartości. To standardowy poziom amortyzacji dla tego okresu użytkowania.`,
+                    color: '#3498db',
+                    priority: 'neutral'
+                });
+            } else {
+                insights.push({
+                    icon: '📉',
+                    title: 'Znaczna utrata wartości',
+                    description: `Wartość końcowa to tylko ${residualPercentage.toFixed(0)}% ceny zakupu. Sprzęt będzie mocno zamortyzowany.`,
+                    color: '#f39c12',
+                    priority: 'neutral'
+                });
+            }
+            
+            // Wniosek 4: Praktyczna perspektywa
+            if (dailyCost < 50) {
+                insights.push({
+                    icon: '☕',
+                    title: 'Koszt codzienny',
+                    description: `Dziennie to kosztuje ${formatCurrency(dailyCost)} - mniej niż lunch w restauracji. To bardzo przystępny koszt dzienny.`,
+                    color: '#27ae60',
+                    priority: 'positive'
+                });
+            } else if (dailyCost < 200) {
+                insights.push({
+                    icon: '🍽️',
+                    title: 'Koszt codzienny',
+                    description: `Dziennie to kosztuje ${formatCurrency(dailyCost)} - jak dobry obiad. Umiarkowany koszt dzienny.`,
+                    color: '#3498db',
+                    priority: 'neutral'
+                });
+            } else {
+                insights.push({
+                    icon: '🏪',
+                    title: 'Znaczny koszt codzienny',
+                    description: `Dziennie to kosztuje ${formatCurrency(dailyCost)} - jak tygodniowe zakupy. To znaczący wydatek dzienny.`,
+                    color: '#e74c3c',
+                    priority: 'warning'
+                });
+            }
+            
+            // Sortuj wnioski - najpierw ostrzeżenia, potem pozytywne
+            insights.sort((a, b) => {
+                const priorityOrder = { 'warning': 0, 'neutral': 1, 'positive': 2, 'info': 3 };
+                return priorityOrder[a.priority] - priorityOrder[b.priority];
+            });
+            
+            // Weź tylko 4 najważniejsze wnioski
+            const finalInsights = insights.slice(0, 4);
+            
+            const summaryInsights = document.getElementById('summaryInsights');
+            summaryInsights.innerHTML = finalInsights.map(insight => `
+                <div class="insight-card-compact" style="border-left-color: ${insight.color};">
+                    <div class="insight-header">
+                        <span class="insight-icon">${insight.icon}</span>
+                        <h4 style="color: ${insight.color};">${insight.title}</h4>
+                    </div>
+                    <p class="insight-description">${insight.description}</p>
+                </div>
+            `).join('');
+            
+            const finalVerdict = document.getElementById('finalVerdict');
+            finalVerdict.innerHTML = `
+                <h4>🎯 Podsumowanie</h4>
+                <p>
+                    ${finalInsights.filter(i => i.priority === 'positive').length > finalInsights.filter(i => i.priority === 'warning').length ? 
+                        '✅ <strong>Parametry inwestycji wyglądają korzystnie.</strong> Większość wskaźników jest na dobrym poziomie.' :
+                        finalInsights.filter(i => i.priority === 'warning').length > 2 ?
+                        '⚠️ <strong>Inwestycja wymaga uwagi.</strong> Kilka parametrów wskazuje na potrzebę dodatkowej analizy.' :
+                        '⚡ <strong>Inwestycja ma mieszane parametry.</strong> Część wskaźników jest dobra, część wymaga uwagi.'
+                    }
+                </p>
+            `;
+        }
+
+        // Event listeners dla automatycznych obliczeń
+        document.getElementById('purchaseCost').addEventListener('input', function() {
+            const operatingCostType = document.getElementById('operatingCostType').value;
+            if (operatingCostType === 'preset') {
+                calculatePresetCosts();
+            }
+        });
+
+        document.getElementById('period').addEventListener('input', function() {
+            const operatingCostType = document.getElementById('operatingCostType').value;
+            if (operatingCostType === 'preset') {
+                calculatePresetCosts();
+            }
+        });
+
+        // Funkcja do wysyłania wysokości do rodzica (dla iframe)
+        function sendHeightToParent() {
+            const height = document.body.scrollHeight;
+            if (window.parent !== window) {
+                try {
+                    window.parent.postMessage({ iframeHeight: height }, '*');
+                } catch (e) {
+                    // Ignoruj błędy przy komunikacji z rodzicem
+                }
+            }
+        }
+
+        // Wyślij wysokość przy załadowaniu i zmianach
+        window.addEventListener('load', sendHeightToParent);
+        window.addEventListener('resize', sendHeightToParent);
+        
+        // Monitoruj zmiany w DOM dla aktualizacji wysokości
+        const observer = new MutationObserver(sendHeightToParent);
+        observer.observe(document.body, { childList: true, subtree: true });
+    </script>
+</body>
+</html>
