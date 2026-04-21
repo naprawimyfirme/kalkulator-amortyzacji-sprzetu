@@ -478,6 +478,7 @@ function renderQuestion() {
   const card = document.querySelector('.q-card');
   card.style.animation = 'none'; card.offsetHeight;
   card.style.animation = 'fadeUp .3s ease both';
+  notifyParent();
 }
 
 function selectOpt(el, val) {
@@ -880,13 +881,31 @@ function showResults() {
   el.innerHTML = h;
   el.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  notifyParent();
 }
 
 function restart() {
   document.getElementById('screenResults').classList.remove('active');
   document.getElementById('screenResults').innerHTML = '';
   document.getElementById('screenIntro').classList.add('active');
+  notifyParent();
 }
+
+/* ═══ IFRAME AUTO-RESIZE ═══ */
+function notifyParent() {
+  requestAnimationFrame(() => {
+    const h = document.documentElement.scrollHeight;
+    window.parent.postMessage({ iframeHeight: h }, '*');
+  });
+}
+
+// Obserwuj zmiany rozmiaru contentu
+const _resizeObserver = new ResizeObserver(() => notifyParent());
+_resizeObserver.observe(document.body);
+
+// Fallback: resize + load
+window.addEventListener('resize', notifyParent);
+window.addEventListener('load', notifyParent);
 </script>
 
 </body>
